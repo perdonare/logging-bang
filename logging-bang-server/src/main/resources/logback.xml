@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<configuration debug="true">
+    <appender name="flume" class="com.lance.logging.logback.appender.FlumeLogstashV1Appender">
+        <flumeAgents>
+            192.168.1.64:4141
+        </flumeAgents>
+        <flumeProperties>
+            connect-timeout=4000;
+            request-timeout=8000
+        </flumeProperties>
+        <batchSize>100</batchSize>
+        <reportingWindow>1000</reportingWindow>
+        <additionalAvroHeaders>
+            myHeader=myValue
+        </additionalAvroHeaders>
+        <application>smapleapp</application>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - \(%file:%line\) - %message%n%ex</pattern>
+        </layout>
+    </appender>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+        <encoder>
+            <pattern> [%date] [%thread] [%-1level] -%mdc{client}  %c{1} %line %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="play" level="INFO" />
+    <logger name="application" level="DEBUG" />
+
+    <!-- Off these ones as they are annoying, and anyway we manage configuration ourselves -->
+    <logger name="com.avaje.ebean.config.PropertyMapLoader" level="OFF" />
+    <logger name="com.avaje.ebeaninternal.server.core.XmlConfigLoader" level="OFF" />
+    <logger name="com.avaje.ebeaninternal.server.lib.BackgroundThread" level="OFF" />
+    <logger name="com.gargoylesoftware.htmlunit.javascript" level="OFF" />
+
+    <root level="INFO">
+        <appender-ref ref="flume" />
+        <appender-ref ref="console"/>
+    </root>
+</configuration>
